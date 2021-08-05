@@ -12,6 +12,6 @@ RUN dotnet publish -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/runtime:2.1
-WORKDIR /app
+WORKDIR /app/nu_authorizations
 COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "nu_authorizations.dll"]
