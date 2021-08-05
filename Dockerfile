@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS build-env
-WORKDIR /nu_authorizations/nu_authorizations
+WORKDIR /app
 
 # Copy csproj and restore as distinct layers
 COPY *.csproj ./
@@ -12,6 +12,6 @@ RUN dotnet publish -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/runtime:2.1
-WORKDIR /nu_authorizations/nu_authorizations
+WORKDIR /app
 COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "nu_authorizations.dll"]
+ENTRYPOINT ["dotnet", "nu_authorizations.sln"]
