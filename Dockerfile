@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS build-env
-WORKDIR /app/nu_athorizations
+WORKDIR /app/nu_authorizations
 
 # Copy csproj and restore as distinct layers
 COPY *.csproj ./
