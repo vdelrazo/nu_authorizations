@@ -6,7 +6,24 @@ namespace nu_authorizations
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            string line = string.Empty;
+            string outputString = string.Empty;
+
+        Input:
+            line = Console.ReadLine();
+
+            if (line != string.Empty)
+            {
+                outputString += line;
+                goto Input;
+
+            }
+            else
+            {
+                Console.WriteLine("OutputString:{0}", outputString);
+            }
+
+            Console.ReadKey();
         }
     }
 }
