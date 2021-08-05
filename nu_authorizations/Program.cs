@@ -22,8 +22,7 @@ namespace nu_authorizations
             {
                 Console.WriteLine("OutputString:{0}", outputString);
             }
-
-            Console.ReadKey();
+            
         }
     }
 }
