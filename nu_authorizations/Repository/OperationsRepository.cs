@@ -17,10 +17,18 @@ namespace nu_authorizations.Repository
             transactionOutputs.Add(BusinessRules.ValidateBRA(account));
             accounts.Add(account);
         }
-        public static void AddTransaction(TransactionRoot transaction)
+        public static void AddTransactionOutput(TransactionRoot transaction)
         {
             transactionOutputs.Add(BusinessRules.ValidateBRT(transaction));
-            transactions.Add(transaction);
+            AddTransaction(transaction);
+        }
+
+        public static void AddTransaction(TransactionRoot transaction)
+        {
+            if (!BusinessRules.doNotAddTransaction)
+            {
+                transactions.Add(transaction);
+            }
         }
 
         public static string RetrieveFormattedResults(AccountRoot account)

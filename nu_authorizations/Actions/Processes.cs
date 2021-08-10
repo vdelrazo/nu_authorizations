@@ -56,6 +56,20 @@ namespace nu_authorizations.Actions
             }
         }
 
+        public static AccountRoot CreateAccount(bool? activeCard, int? availableLimit)
+        {
+            AccountRoot account = new AccountRoot
+            {
+                account = new Account
+                {
+                    activeCard = activeCard,
+                    availableLimit = availableLimit
+                },
+                violations = Processes.violations.ToArray()
+            };
+            return account;
+        }
+
         //public static AccountRoot InitializeAccountBase ()
         //{
         //    AccountRoot account = new AccountRoot

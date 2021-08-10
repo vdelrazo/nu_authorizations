@@ -45,7 +45,7 @@ namespace nu_authorizations
                 else
                 {
                     TransactionRoot transaction = Actions.Processes.DeserializeTransaction(line);
-                    OperationsRepository.AddTransaction(transaction);
+                    OperationsRepository.AddTransactionOutput(transaction);
                 }
                 //Operation operation = Actions.Processes.DeserializeTransaction(line);
                 // Add

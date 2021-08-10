@@ -11,193 +11,129 @@ namespace nu_authorizations.Actions
 {
     public class BusinessRules
     {
-        public static AccountRoot accountBase = new AccountRoot
-        {
-            account = new Account { activeCard = null, availableLimit = null} 
-        };
+        public static bool? activeCard = null;
+        public static int? availableLimit = null;
+        public static AccountRoot accountToStore;
+        public static List<bool> checkList = new List<bool>();
+        public static bool doNotAddTransaction = false;
 
         public static AccountRoot ValidateBRA(AccountRoot account)
         {
 
             Processes.violations.Clear();
-            // Processes.ResetAccountBase(accountBase);
-            
-
-            // if(operation.account != null)
-            // {
             AccountInitialized(account);
-            // }
-            //if(operation.transaction != null && !Processes.violations.Last().Equals("account-not-initialized"))
-            //{
-            //    // if (!Processes.violations.Last().Equals("account-not-initialized"))
-            //    // {
-            //        CardNotActive(operation);
-            //        InsufficientLimit(operation);
-            //        HighFrequencySmallInterval(operation);
-            //        DoubledTransaction(operation);
-            //    // }                
-            //}
-
-            account.violations = Processes.violations.ToArray();
-            // operation.account = accountBackup.account;
-            return account;
+            accountToStore = Processes.CreateAccount(activeCard, availableLimit);
+            return accountToStore;
         }
 
         public static AccountRoot ValidateBRT(TransactionRoot transaction)
         {
             Processes.violations.Clear();
-            List<AccountRoot> kjdbsasdf = OperationsRepository.transactionOutputs;
-            // Processes.ResetAccountBase(accountBase);
-
-            // if(operation.account != null)
-            // {
+            checkList.Clear();
+            doNotAddTransaction = false;
             AccountNotInitialized(transaction);
-            // }
-            //if (operation.transaction != null && !Processes.violations.Last().Equals("account-not-initialized"))
-            //{
-            //    // if (!Processes.violations.Last().Equals("account-not-initialized"))
-            //    // {
-            //    CardNotActive(operation);
-            //    InsufficientLimit(operation);
-            //    HighFrequencySmallInterval(operation);
-            //    DoubledTransaction(operation);
-            //    // }                
-            //}
-            List<AccountRoot> kjdbs = OperationsRepository.transactionOutputs;
-            accountBase.violations = Processes.violations.ToArray();
-            return accountBase;
+            accountToStore = Processes.CreateAccount(activeCard, availableLimit);
+            return accountToStore;
         }
 
         private static void AccountInitialized(AccountRoot account)
         {
-            // bool existingAccount = false;
-            //try
-            //{
-            //    existingAccount = OperationsRepository.accounts.Any(acc => acc.activeCard == true || acc == null);
-            //}
-            //catch
-            //{
-            //    existingOperation = false;
-            //}
-            if (OperationsRepository.accounts.Any(acc => acc.account.activeCard == true || acc.account.activeCard == false))
+             if (OperationsRepository.accounts.Any(acc => acc.account.activeCard == true || acc.account.activeCard == false))
             {
-                //if (account.account.activeCard == false)
-                //{
-
-                //}
-                //else
-                //{
-                    Processes.AppendViolations(1); // Account already initialized
-                // }
+                       Processes.AppendViolations(1); // Account already initialized
             }
             else
             {
-                bool? activeCard = account.account.activeCard;
-                int? availableLimit = account.account.availableLimit;
-                accountBase.account.activeCard = activeCard;
-                accountBase.account.availableLimit = availableLimit;
-                accountBase.violations = new string[] { };
-                //account.violations = new string[] { };
-                //accountBase = account;
-            }
+                activeCard = account.account.activeCard;
+                availableLimit = account.account.availableLimit;
+           }
         }
 
         private static void AccountNotInitialized(TransactionRoot transaction)
         {
             if (!OperationsRepository.accounts.Any(acc => acc.account.activeCard == true || acc.account.activeCard == false))
             {
-                // if (operation.account.activeCard == true || operation.account.activeCard == false)
-                // {
-                // Processes.AppendViolations(1); // Account already initialized
-                // }
-
-                Processes.AppendViolations(2);
+                  Processes.AppendViolations(2);
             }
-            //else if (operation.transaction != null)
-            //{
-            //    Processes.AppendViolations(2); // Account not initialized
-            //    operation.account = new Account();
-            //}
             else
             {
-                //accountBase.violations = new string[] { };
-                if (CardNotActive() == true &&
-                    InsufficientLimit(transaction) == true)
+                CardNotActive();
+                InsufficientLimit(transaction);
+                HighFrequencySmallInterval(transaction);
+                DoubledTransaction(transaction);
+
+                if (!checkList.Contains(false))
                 {
-                    List<AccountRoot> kjdbssoqidnwq = OperationsRepository.transactionOutputs;
-                    accountBase.account.availableLimit = accountBase.account.availableLimit - transaction.transaction.amount;
-                    List<AccountRoot> kjdbs = OperationsRepository.transactionOutputs;
+                    availableLimit = availableLimit - transaction.transaction.amount;
                 }
-                //CardNotActive();
             }
         }
 
-        private static bool CardNotActive()
+        private static void CardNotActive()
         {
-            // Operation cardActive = OperationsRepository.operationsList.FindLast(op => op.account.activeCard == true);
             if (!OperationsRepository.accounts.Any(acc => acc.account.activeCard == true))
             {
                 Processes.AppendViolations(3); // Card not active
-                return false;
+                checkList.Add(false);
             }
             else
             {
-                return true;
-                //operation.violations = operation.violations == null ? new string[] { } : operation.violations;
+                checkList.Add(true);
             }
         }
 
-        private static bool InsufficientLimit(TransactionRoot transaction)
+        private static void InsufficientLimit(TransactionRoot transaction)
         {
-            if (accountBase.account.availableLimit < transaction.transaction.amount)
+            if (availableLimit < transaction.transaction.amount)
             {
                 Processes.AppendViolations(4); // Insufficient limit
-                return false;
+                doNotAddTransaction = true;
+                checkList.Add(false);
             }
             else
             {
-                return true;
-                // operation.violations = operation.violations == null ? new string[] { } : operation.violations;
+                checkList.Add(true);
             }
         }
 
-        //private static void HighFrequencySmallInterval(Operation operation)
-        //{
-        //    int minuteWindow = -3;
-        //    int transactionsNumber = 3;
+        private static void HighFrequencySmallInterval(TransactionRoot transaction)
+        {
+            int minuteWindow = -3;
+            int transactionsNumber = 3;
 
-        //    List<Operation> previousTransactions = OperationsRepository.operationsList.FindAll
-        //        (op => op.transaction != null &&
-        //            op.transaction.time > operation.transaction.time.Add(new TimeSpan(0, minuteWindow, 0))); // last list index suma sin son tres y rechaza
-        //    if (previousTransactions.Count >= transactionsNumber)
-        //    {
-        //        Processes.AppendViolations(5); // High frequency small interval
-        //    }
-        //    //else
-        //    //{
-        //    //    operation.violations = operation.violations == null ? new string[] { } : operation.violations;
-        //    //}
-        //}
+            List<TransactionRoot> previousTransactions = OperationsRepository.transactions.FindAll
+                (tran => tran.transaction != null &&
+                    tran.transaction.time > transaction.transaction.time.Add(new TimeSpan(0, minuteWindow, 0))); // last list index suma sin son tres y rechaza
 
-        //private static void DoubledTransaction(Operation operation)
-        //{
-        //    int amount = operation.transaction.amount;
-        //    string merchant = operation.transaction.merchant;
-        //    int minuteWindow = 2;
+            if (previousTransactions.Count >= transactionsNumber)
+            {
+                Processes.AppendViolations(5); // High frequency small interval
+                checkList.Add(false);
+            }
+            else
+            {
+                checkList.Add(true);
+            }
+        }
 
-        //    List<Operation> previousTransactions = OperationsRepository.operationsList.FindAll
-        //        (op => op.transaction != null &&
-        //            op.transaction.time > operation.transaction.time.Add(new TimeSpan(0, minuteWindow, 0)) &&
-        //            op.transaction.merchant.Equals(merchant) &&
-        //            op.transaction.amount == amount); 
-        //    if (previousTransactions.Count > 1)
-        //    {
-        //        Processes.AppendViolations(6); // Doubled Transaction
-        //    }
-        //    //else
-        //    //{
-        //    //    operation.violations = operation.violations == null ? new string[] { } : operation.violations;
-        //    //}
-        //}
+        private static void DoubledTransaction(TransactionRoot transaction)
+        {
+            int amount = transaction.transaction.amount;
+            string merchant = transaction.transaction.merchant;
+            
+            List<TransactionRoot> previousTransactions = OperationsRepository.transactions.FindAll
+                (tran => tran.transaction.merchant.Equals(merchant) &&
+                    tran.transaction.amount == amount);
+            if (previousTransactions.Count >= 1)
+            {
+                Processes.AppendViolations(6); // Doubled Transaction
+                doNotAddTransaction = true;
+                checkList.Add(false);
+            }
+            else
+            {
+                checkList.Add(true);
+            }
+        }
     }
 }
