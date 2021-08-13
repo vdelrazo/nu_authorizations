@@ -19,9 +19,10 @@ After all operations are processed then the program reads the output list conten
 All data is stored in global lists.
 
 ## How to compile (using docker)
-Download the application to a local folder.
-Open folder location in a console.
-Use docker to compile, make sure you already have an image created and then run the next scripts:
+Download the application to a local folder.  
+Open folder location in a console.  
+Go inside nu_authorizations folder. Your path should look something like this: pathtofolder/nu_authorizations>
+Use docker to compile, make sure you already have an image created and then run the next scripts:  
 - docker build -t nu_authorizations .
 - docker run -i --name nameforapp nu_authorizations
 
