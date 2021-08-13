@@ -24,6 +24,7 @@ Open folder location in a console.
 Use docker to compile, make sure you already have an image created and then run the next scripts:
 - docker build -t nu_authorizations .
 - docker run -i --name nameforapp nu_authorizations
+
 Then, the console will be waiting for the input, which are the transactions to be processed. Please write them all here. 
 
 ***Important notes: 
