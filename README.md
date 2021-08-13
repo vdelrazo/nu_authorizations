@@ -39,5 +39,5 @@ Here an example o the lines that need to be entered:
 {"transaction": {"merchant": "Burger King", "amount": 15, "time": "2019-02-13T12:00:27.000Z"}}  
 
 ***Important notes: 
-The application expect to have a line break after each transaction entered.
-If you do not want to add anymore transactions hit enter to insert a blank line and process the lines.
+The application expect to have a line break after each transaction entered.  
+If you do not want to add anymore transactions hit enter to insert a blank line and process the inbound transactions.  
