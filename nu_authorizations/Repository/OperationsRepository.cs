@@ -12,8 +12,6 @@ namespace nu_authorizations.Repository
         {
             OutputList.AddRecord(BusinessRules.ValidateBRA(account));
             AccountsList.AddAccount(account);
-            
-
         }
         public static void AddTransactionOutput(TransactionRoot transaction)
         {
