@@ -51,7 +51,7 @@ namespace nu_authorizations.Actions
                     break;
 
                 case 6:
-                    violations.Add("doubled-transaction");
+                    violations.Add("double-transaction");
                     break;
             }
         }
@@ -69,20 +69,5 @@ namespace nu_authorizations.Actions
             };
             return account;
         }
-
-        //public static AccountRoot InitializeAccountBase ()
-        //{
-        //    AccountRoot account = new AccountRoot
-        //    {
-        //        account = new Account { activeCard = null, availableLimit = null }
-        //    };
-
-        //    if (OperationsRepository.accounts.Any(acc => acc.account.activeCard == true || acc.account.activeCard == false))
-        //    {
-        //        account = OperationsRepository.accounts.Last();
-        //    }
-
-        //    return account;
-        //}
     }
 }

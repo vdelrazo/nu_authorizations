@@ -8,26 +8,24 @@ namespace nu_authorizations.Repository
 {
     public static class OperationsRepository
     {
-        public static List<AccountRoot> accounts = new List<AccountRoot>();
-        public static List<TransactionRoot> transactions = new List<TransactionRoot>();
-        public static List<AccountRoot> transactionOutputs = new List<AccountRoot>();
-
         public static void AddAccount(AccountRoot account)
         {
-            transactionOutputs.Add(BusinessRules.ValidateBRA(account));
-            accounts.Add(account);
+            OutputList.AddRecord(BusinessRules.ValidateBRA(account));
+            AccountsList.AddAccount(account);
+            
+
         }
         public static void AddTransactionOutput(TransactionRoot transaction)
         {
-            transactionOutputs.Add(BusinessRules.ValidateBRT(transaction));
-            AddTransaction(transaction);
+            OutputList.AddRecord(BusinessRules.ValidateBRT(transaction));
+            TransactionsList.AddTransaction(transaction);
         }
 
         public static void AddTransaction(TransactionRoot transaction)
         {
             if (!BusinessRules.doNotAddTransaction)
             {
-                transactions.Add(transaction);
+                TransactionsList.AddTransaction(transaction);
             }
         }
 

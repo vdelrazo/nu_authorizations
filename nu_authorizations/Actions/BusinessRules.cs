@@ -1,28 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using nu_authorizations.Models;
 using nu_authorizations.Repository;
 using System.Linq;
-using Newtonsoft.Json;
-using nu_authorizations.Actions;
 
 namespace nu_authorizations.Actions
 {
     public class BusinessRules
     {
         public static bool? activeCard = null;
-        public static int? availableLimit = null;
         public static AccountRoot accountToStore;
         public static List<bool> checkList = new List<bool>();
         public static bool doNotAddTransaction = false;
-
+        
         public static AccountRoot ValidateBRA(AccountRoot account)
         {
-
             Processes.violations.Clear();
             AccountInitialized(account);
-            accountToStore = Processes.CreateAccount(activeCard, availableLimit);
+            accountToStore = Processes.CreateAccount(activeCard, CreditLimit.GetLimit());
             return accountToStore;
         }
 
@@ -32,26 +27,26 @@ namespace nu_authorizations.Actions
             checkList.Clear();
             doNotAddTransaction = false;
             AccountNotInitialized(transaction);
-            accountToStore = Processes.CreateAccount(activeCard, availableLimit);
+            accountToStore = Processes.CreateAccount(activeCard, CreditLimit.GetLimit());
             return accountToStore;
         }
 
         private static void AccountInitialized(AccountRoot account)
         {
-             if (OperationsRepository.accounts.Any(acc => acc.account.activeCard == true || acc.account.activeCard == false))
-            {
-                       Processes.AppendViolations(1); // Account already initialized
-            }
+             if (AccountsList.RetrieveAccounts().Any(acc => acc.account.activeCard == true || acc.account.activeCard == false))
+             {
+                 Processes.AppendViolations(1); // Account already initialized
+             }
             else
             {
                 activeCard = account.account.activeCard;
-                availableLimit = account.account.availableLimit;
-           }
+                CreditLimit.SetLimit(account.account.availableLimit);
+            }
         }
 
         private static void AccountNotInitialized(TransactionRoot transaction)
         {
-            if (!OperationsRepository.accounts.Any(acc => acc.account.activeCard == true || acc.account.activeCard == false))
+            if (!AccountsList.RetrieveAccounts().Any(acc => acc.account.activeCard == true || acc.account.activeCard == false))
             {
                   Processes.AppendViolations(2);
             }
@@ -64,14 +59,14 @@ namespace nu_authorizations.Actions
 
                 if (!checkList.Contains(false))
                 {
-                    availableLimit = availableLimit - transaction.transaction.amount;
+                    CreditLimit.SetLimit(CreditLimit.GetLimit() - transaction.transaction.amount);
                 }
             }
         }
 
         private static void CardNotActive()
         {
-            if (!OperationsRepository.accounts.Any(acc => acc.account.activeCard == true))
+            if (!AccountsList.RetrieveAccounts().Any(acc => acc.account.activeCard == true))
             {
                 Processes.AppendViolations(3); // Card not active
                 checkList.Add(false);
@@ -84,7 +79,7 @@ namespace nu_authorizations.Actions
 
         private static void InsufficientLimit(TransactionRoot transaction)
         {
-            if (availableLimit < transaction.transaction.amount)
+            if (CreditLimit.GetLimit() < transaction.transaction.amount)
             {
                 Processes.AppendViolations(4); // Insufficient limit
                 doNotAddTransaction = true;
@@ -101,9 +96,10 @@ namespace nu_authorizations.Actions
             int minuteWindow = -3;
             int transactionsNumber = 3;
 
-            List<TransactionRoot> previousTransactions = OperationsRepository.transactions.FindAll
+            // Find all transactions inside minute window and add them to previousTransactions
+            List<TransactionRoot> previousTransactions = TransactionsList.RetrieveTransactions().FindAll
                 (tran => tran.transaction != null &&
-                    tran.transaction.time > transaction.transaction.time.Add(new TimeSpan(0, minuteWindow, 0))); // last list index suma sin son tres y rechaza
+                    tran.transaction.time > transaction.transaction.time.Add(new TimeSpan(0, minuteWindow, 0))); 
 
             if (previousTransactions.Count >= transactionsNumber)
             {
@@ -121,7 +117,7 @@ namespace nu_authorizations.Actions
             int amount = transaction.transaction.amount;
             string merchant = transaction.transaction.merchant;
             
-            List<TransactionRoot> previousTransactions = OperationsRepository.transactions.FindAll
+            List<TransactionRoot> previousTransactions = TransactionsList.RetrieveTransactions().FindAll
                 (tran => tran.transaction.merchant.Equals(merchant) &&
                     tran.transaction.amount == amount);
             if (previousTransactions.Count >= 1)

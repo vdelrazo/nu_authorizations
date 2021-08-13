@@ -14,23 +14,6 @@ namespace nu_authorizations
             string line = string.Empty;
             string outputString = string.Empty;
 
-            // string op1 = "{\"account\": {\"active-card\": true, \"available-limit\": 175}}";
-            // string op2 = "{\"transaction\": {\"merchant\": \"Burger King\", \"amount\": 20, \"time\": \"2019-02-13T10:00:00.000Z\"}}";
-
-            // Deserialize
-            // Account operation = Actions.Processes.DeserializeAccount(op1);
-            //Transaction sspqknxpq = Actions.Processes.DeserializeTransaction(op2);
-
-        // Add
-        // OperationsRepository.AddOperation(operation);
-
-        // Check violations
-
-        // Retrieve operations
-        // Operation[] nusnjams = OperationsRepository.RetrieveOperations();
-
-
-
         Input:
             line = Console.ReadLine();
 
@@ -47,15 +30,12 @@ namespace nu_authorizations
                     TransactionRoot transaction = Actions.Processes.DeserializeTransaction(line);
                     OperationsRepository.AddTransactionOutput(transaction);
                 }
-                //Operation operation = Actions.Processes.DeserializeTransaction(line);
-                // Add
-                //OperationsRepository.AddOperation(operation);
 
                 goto Input;
             }
             else
             {
-                foreach(AccountRoot transactionOutput in OperationsRepository.transactionOutputs)
+                foreach(AccountRoot transactionOutput in OutputList.RetrieveOutput())
                 {
                     Console.WriteLine(OperationsRepository.RetrieveFormattedResults(transactionOutput));
                 }

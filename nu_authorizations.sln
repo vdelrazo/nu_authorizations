@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.1500
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nu_authorizations", "nu_authorizations\nu_authorizations.csproj", "{4875002A-310D-41B0-9499-4137DBB96747}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nu_authorizations", "nu_authorizations\nu_authorizations.csproj", "{4875002A-310D-41B0-9499-4137DBB96747}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nu_authorizations_XUnitTest", "nu_authorizations_XUnitTest\nu_authorizations_XUnitTest.csproj", "{69CD464A-AE81-44FF-8167-19F760460B5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{4875002A-310D-41B0-9499-4137DBB96747}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4875002A-310D-41B0-9499-4137DBB96747}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4875002A-310D-41B0-9499-4137DBB96747}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69CD464A-AE81-44FF-8167-19F760460B5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69CD464A-AE81-44FF-8167-19F760460B5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69CD464A-AE81-44FF-8167-19F760460B5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69CD464A-AE81-44FF-8167-19F760460B5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
